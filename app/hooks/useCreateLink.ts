@@ -1,0 +1,139 @@
+// app/hooks/useCreateLink.ts
+import { useState, useEffect, FormEvent } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { linkService } from '../services/linkService';
+import { userService } from '../services/userService';
+import { Domain, GeoRule, CreateLinkPayload } from '../types';
+
+export function useCreateLink() {
+    const { user, loading: authLoading } = useAuth();
+
+    // Form States
+    const [originalUrl, setOriginalUrl] = useState('');
+    const [customSlug, setCustomSlug] = useState('');
+    const [domains, setDomains] = useState<Domain[]>([]);
+    const [selectedDomain, setSelectedDomain] = useState<string>('');
+
+    // Geo Targeting State
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [geoRules, setGeoRules] = useState<GeoRule[]>([]);
+
+    // Scheduling State
+    const [scheduleAt, setScheduleAt] = useState('');
+    const [expireAt, setExpireAt] = useState('');
+
+    // UI States
+    const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [successResult, setSuccessResult] = useState<string | null>(null);
+
+    // Fetch Domains
+    useEffect(() => {
+        if (authLoading) return;
+
+        const fetchInitData = async () => {
+            try {
+                let userId = null;
+                // Nếu đã login, lấy Strapi ID để lấy custom domains
+                if (user) {
+                    try {
+                        const me: any = await userService.getMe();
+                        userId = me.id;
+                    } catch (e) { console.error(e); }
+                }
+
+                // Gọi service đã được chuẩn hóa, luôn trả về mảng Domain[]
+                const allDomains = await linkService.getDomains(userId || undefined);
+
+                setDomains(allDomains);
+                if (allDomains.length > 0) setSelectedDomain(allDomains[0].id);
+
+            } catch (err) {
+                console.error("Lỗi tải domain", err);
+            }
+        };
+
+        fetchInitData();
+    }, [user, authLoading]);
+
+    // Helper Functions cho GeoRules
+    const addGeoRule = () => setGeoRules([...geoRules, { country: '', url: '' }]);
+
+    const removeGeoRule = (index: number) => {
+        const newRules = [...geoRules];
+        newRules.splice(index, 1);
+        setGeoRules(newRules);
+    };
+
+    const updateGeoRule = (index: number, field: 'country' | 'url', value: string) => {
+        const newRules = [...geoRules];
+        newRules[index] = { ...newRules[index], [field]: value };
+        setGeoRules(newRules);
+    };
+
+    // Submit Function
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        setLoadingMessage('Đang xử lý...');
+        setError(null);
+        setSuccessResult(null);
+
+        try {
+            // Verify Link
+            const verifyRes: any = await linkService.verifyLink(originalUrl);
+            const isSafe = verifyRes.data ? verifyRes.data.isSafe : verifyRes.isSafe;
+            if (isSafe === false) {
+                throw new Error('Link không an toàn theo Google Safe Browsing.');
+            }
+
+            // 2. Prepare Payload
+            const geoTargetingJson: Record<string, string> = {};
+            geoRules.forEach(rule => {
+                if (rule.url?.trim()) geoTargetingJson[rule.country] = rule.url;
+            });
+
+            const payload: CreateLinkPayload = {
+                original_url: originalUrl,
+                custom_slug: customSlug || undefined,
+                domain: selectedDomain,
+                verified_safe: true,
+                geo_targeting: Object.keys(geoTargetingJson).length > 0 ? geoTargetingJson : null,
+                expire_at: expireAt || null,
+                schedule_at: scheduleAt || null
+            };
+
+            // 3. Call API
+            const res: any = await linkService.createLink(payload);
+            const createdLink = res.data || res;
+            setSuccessResult(createdLink.full_short_url);
+            // Reset Form
+            setOriginalUrl('');
+            setCustomSlug('');
+            setGeoRules([]);
+            setScheduleAt('');
+            setExpireAt('');
+
+        } catch (err: any) {
+            setError(err?.error?.message || err.message || 'Lỗi tạo link');
+        } finally {
+            setLoadingMessage(null);
+        }
+    };
+
+    return {
+        isAuthLoading: authLoading,
+        domains,
+        selectedDomain, setSelectedDomain,
+        originalUrl, setOriginalUrl,
+        customSlug, setCustomSlug,
+        // Geo
+        showAdvanced, setShowAdvanced,
+        geoRules, addGeoRule, removeGeoRule, updateGeoRule,
+        // Schedule
+        scheduleAt, setScheduleAt,
+        expireAt, setExpireAt,
+        // UI
+        loadingMessage, error, successResult,
+        handleSubmit
+    };
+}
