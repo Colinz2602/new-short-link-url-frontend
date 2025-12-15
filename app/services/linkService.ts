@@ -11,7 +11,7 @@ export const linkService = {
     },
 
     getLinkBySlug: (slug: string) => {
-        return axiosClient.get(`/api/links/go/${slug}`);
+        return axiosClient.get(`/api/links/${slug}`);
     },
 
     bulkImport: (formData: FormData) => {
@@ -42,21 +42,33 @@ export const linkService = {
     },
 
     getDomains: async (userId?: number): Promise<Domain[]> => {
+        console.log("🚀 [LinkService] Bắt đầu gọi getDomains...");
         try {
+            console.log("📡 [LinkService] Requesting: /api/domains?filters[type]=public");
+
             const publicReq = axiosClient.get<any, { data: Domain[] }>('/api/domains?filters[type]=public');
 
             if (userId) {
+                console.log(`👤 [LinkService] Có UserId ${userId}, gọi thêm custom domains...`);
                 const [publicRes, customRes] = await Promise.all([
                     publicReq,
                     axiosClient.get<any, { data: Domain[] }>(`/api/domains?filters[type]=custom&filters[users_permissions_user][id]=${userId}`)
                 ]);
-                return [...(publicRes.data || []), ...(customRes.data || [])];
+                const combined = [...(publicRes.data || []), ...(customRes.data || [])];
+                console.log("✅ [LinkService] Kết quả (User):", combined);
+                return combined;
             }
 
             const res = await publicReq;
+            console.log("✅ [LinkService] Kết quả (Guest - Public Only):", res.data);
             return res.data || [];
-        } catch (error) {
-            console.error("Error fetching domains:", error);
+        } catch (error: any) {
+            console.error("❌ [LinkService] Error fetching domains:", {
+                status: error?.response?.status,
+                statusText: error?.response?.statusText,
+                url: error?.config?.url,
+                message: error?.message
+            });
             return [];
         }
     },
