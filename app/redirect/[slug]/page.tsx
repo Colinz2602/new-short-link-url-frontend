@@ -12,17 +12,23 @@ export default function RedirectPage() {
     if (error) {
         return (
             <main className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
-                <h1 className="text-3xl font-bold text-red-600">Lỗi</h1>
+                <h1 className="text-3xl font-bold text-red-600">Error</h1>
                 <p className="mt-3 text-xl">{error}</p>
-                <a href="/" className="mt-6 text-blue-600 underline">Về trang chủ</a>
+                <a href="/" className="mt-6 text-blue-600 underline">
+                    Back to homepage
+                </a>
             </main>
         );
     }
 
     return (
         <main className="flex flex-col items-center justify-center min-h-screen text-center">
-            <h1 className="text-3xl font-bold animate-pulse">{message}</h1>
-            <p className="text-gray-500 mt-4">Vui lòng đợi trong giây lát...</p>
+            <h1 className="text-3xl font-bold animate-pulse">
+                {message}
+            </h1>
+            <p className="text-gray-500 mt-4">
+                Please wait a moment...
+            </p>
         </main>
     );
 }

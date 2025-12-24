@@ -34,13 +34,18 @@ export function useBulkImport() {
             setUploading(false);
         }
     };
-
+    const reset = () => {
+        setFile(null);
+        setResult(null);
+        setError(null);
+    };
     return {
         file,
         uploading,
         result,
         error,
         handleFileChange,
-        handleUpload
+        handleUpload,
+        reset
     };
 }

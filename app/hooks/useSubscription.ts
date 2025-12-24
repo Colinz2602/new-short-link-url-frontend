@@ -30,7 +30,6 @@ export function useSubscription() {
                 if (realData.plan_type === 'bundle') display = 'Pro Bundle';
                 else if (realData.plan_type === 'annual') display = 'Annual VIP';
                 else if (realData.plan_type === 'quarterly') display = 'Quarterly Pro';
-                else if (realData.plan_type === 'single') display = 'Single Tool';
 
                 setPlan(display);
             } catch (err) {

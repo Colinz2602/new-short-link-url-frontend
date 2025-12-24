@@ -10,7 +10,7 @@ export const userService = {
     },
 
     createCheckoutSession: (priceId: string, planType: string) => {
-        return axiosClient.post('/api/subscriptions/checkout', {
+        return axiosClient.post('/api/payment/checkout', {
             priceId,
             planType
         });

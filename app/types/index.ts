@@ -38,6 +38,7 @@ export interface ApiLink {
     qr_image?: {
         url: string;
     };
+    ai_insights?: string;
 }
 
 export interface PaginationMeta {

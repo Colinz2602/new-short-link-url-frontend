@@ -5,6 +5,6 @@ export async function handleGoogleLogin() {
         await authService.signInWithGoogle();
     } catch (err) {
         console.error(err);
-        alert("Đăng nhập thất bại. Vui lòng thử lại.");
+        alert("Login failed. Please try again.");
     }
 }

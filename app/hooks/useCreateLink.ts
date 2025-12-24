@@ -14,6 +14,11 @@ export function useCreateLink() {
     const [domains, setDomains] = useState<Domain[]>([]);
     const [selectedDomain, setSelectedDomain] = useState<string>('');
 
+    // Create domain
+    const [showDomainInput, setShowDomainInput] = useState(false);
+    const [newDomainName, setNewDomainName] = useState('');
+    const [isCreatingDomain, setIsCreatingDomain] = useState(false);
+
     // Geo Targeting State
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [geoRules, setGeoRules] = useState<GeoRule[]>([]);
@@ -27,34 +32,69 @@ export function useCreateLink() {
     const [error, setError] = useState<string | null>(null);
     const [successResult, setSuccessResult] = useState<string | null>(null);
 
+    const fetchDomains = async () => {
+        try {
+            let userId = null;
+            if (user) {
+                try {
+                    const me: any = await userService.getMe();
+                    userId = me.id;
+                } catch (e) { console.error(e); }
+            }
+            const allDomains = await linkService.getDomains(userId || undefined);
+            setDomains(allDomains);
+
+            // Nếu chưa chọn domain nào hoặc domain đang chọn không còn trong list, chọn cái đầu tiên
+            if (allDomains.length > 0 && !selectedDomain) {
+                setSelectedDomain(allDomains[0].id);
+            }
+            return allDomains;
+        } catch (err) {
+            console.error("Lỗi tải domain", err);
+            return [];
+        }
+    };
+
     // Fetch Domains
     useEffect(() => {
-        if (authLoading) return;
-
-        const fetchInitData = async () => {
-            try {
-                let userId = null;
-                // Nếu đã login, lấy Strapi ID để lấy custom domains
-                if (user) {
-                    try {
-                        const me: any = await userService.getMe();
-                        userId = me.id;
-                    } catch (e) { console.error(e); }
-                }
-
-                // Gọi service đã được chuẩn hóa, luôn trả về mảng Domain[]
-                const allDomains = await linkService.getDomains(userId || undefined);
-
-                setDomains(allDomains);
-                if (allDomains.length > 0) setSelectedDomain(allDomains[0].id);
-
-            } catch (err) {
-                console.error("Lỗi tải domain", err);
-            }
-        };
-
-        fetchInitData();
+        if (!authLoading) {
+            fetchDomains().then((fetchedDomains) => {
+                if (fetchedDomains.length > 0) setSelectedDomain(fetchedDomains[0].id);
+            });
+        }
     }, [user, authLoading]);
+
+    const handleCreateDomain = async () => {
+        if (!newDomainName) return;
+        const hasCustomDomain = domains.some(d => d.type === 'custom');
+
+        if (hasCustomDomain) {
+            setError('Mỗi tài khoản chỉ được tạo 1 Custom Domain.');
+            return;
+        }
+        setIsCreatingDomain(true);
+        setError(null);
+        try {
+            const res: any = await linkService.createDomain(newDomainName);
+            const newDomain = res.data || res; // Strapi v5 trả về data
+
+            // Refresh list và chọn domain mới
+            const updatedList = await fetchDomains();
+            setDomains(updatedList);
+            setSelectedDomain(newDomain.id || newDomain.documentId); // Chọn domain vừa tạo
+
+            // Reset UI
+            setShowDomainInput(false);
+            setNewDomainName('');
+
+        } catch (err: any) {
+            console.error(err);
+            const msg = err?.error?.message || err?.message || 'Không thể tạo domain';
+            setError(msg);
+        } finally {
+            setIsCreatingDomain(false);
+        }
+    };
 
     // Helper Functions cho GeoRules
     const addGeoRule = () => setGeoRules([...geoRules, { country: '', url: '' }]);
@@ -79,6 +119,7 @@ export function useCreateLink() {
         setSuccessResult(null);
 
         try {
+
             // Verify Link
             const verifyRes: any = await linkService.verifyLink(originalUrl);
             const isSafe = verifyRes.data ? verifyRes.data.isSafe : verifyRes.isSafe;
@@ -134,6 +175,11 @@ export function useCreateLink() {
         expireAt, setExpireAt,
         // UI
         loadingMessage, error, successResult,
-        handleSubmit
+        handleSubmit,
+        // Domain
+        user,
+        showDomainInput, setShowDomainInput,
+        newDomainName, setNewDomainName,
+        handleCreateDomain, isCreatingDomain
     };
 }

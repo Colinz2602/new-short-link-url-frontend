@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/layout/Navbar';
+import Navbar from '../components/Navbar/Navbar';
 
 export default function CreateLayout({
     children,
@@ -14,9 +14,9 @@ export default function CreateLayout({
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-brand-dark text-white">
             <Navbar />
-            <div className="py-6">
+            <div className="w-full">
                 {children}
             </div>
         </div>

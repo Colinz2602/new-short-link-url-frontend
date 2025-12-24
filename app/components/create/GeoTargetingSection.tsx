@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import Select from 'react-select';
+import Select, { StylesConfig } from 'react-select';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import viLocale from 'i18n-iso-countries/langs/vi.json';
@@ -16,6 +16,42 @@ interface GeoTargetingSectionProps {
     removeGeoRule: (index: number) => void;
     updateGeoRule: (index: number, field: 'country' | 'url', value: string) => void;
 }
+
+// Custom styles for Dark Mode
+const customSelectStyles: StylesConfig<any, false> = {
+    control: (provided, state) => ({
+        ...provided,
+        backgroundColor: 'rgba(17, 24, 39, 0.5)',
+        borderColor: state.isFocused ? '#3b82f6' : '#374151',
+        color: 'white',
+        padding: '2px',
+        borderRadius: '0.75rem',
+    }),
+    menu: (provided) => ({
+        ...provided,
+        backgroundColor: '#1f2937',
+        border: '1px solid #374151',
+        zIndex: 9999,
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#374151' : '#1f2937',
+        color: 'white',
+        cursor: 'pointer',
+    }),
+    singleValue: (provided) => ({
+        ...provided,
+        color: 'white',
+    }),
+    input: (provided) => ({
+        ...provided,
+        color: 'white',
+    }),
+    placeholder: (provided) => ({
+        ...provided,
+        color: '#9ca3af',
+    }),
+};
 
 export default function GeoTargetingSection({
     showAdvanced,
@@ -36,44 +72,55 @@ export default function GeoTargetingSection({
     }, []);
 
     return (
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div className="border-t border-gray-700/50 pt-4">
             <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center text-blue-600 font-semibold hover:underline"
+                className="flex items-center text-blue-400 font-semibold hover:text-blue-300 transition-colors"
             >
-                {showAdvanced ? '▼' : '►'} Cấu hình nâng cao (Geo Targeting)
+                <span className="mr-2">{showAdvanced ? '▼' : '►'}</span>
+                Advanced Settings (Geo Targeting)
             </button>
 
             {showAdvanced && (
-                <div className="mt-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-600">
-                    <p className="text-sm text-gray-500 mb-3">
-                        Điều hướng người dùng đến URL khác dựa trên quốc gia của họ.
+                <div className="mt-4 bg-gray-800/40 p-4 rounded-xl border border-dashed border-gray-600 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="text-sm text-gray-400 mb-4">
+                        Redirect users to different URLs based on their country.
                     </p>
 
                     {geoRules.map((rule, index) => (
-                        <div key={index} className="flex flex-col md:flex-row gap-2 mb-3 items-start md:items-center">
+                        <div
+                            key={index}
+                            className="flex flex-col md:flex-row gap-3 mb-4 items-start md:items-center"
+                        >
                             <div className="w-full md:w-5/12">
                                 <Select
                                     options={countryOptions}
                                     value={countryOptions.find(opt => opt.value === rule.country)}
-                                    onChange={(option) => updateGeoRule(index, 'country', option?.value || '')}
-                                    placeholder="Tìm quốc gia..."
-                                    classNamePrefix="react-select"
+                                    onChange={(option) =>
+                                        updateGeoRule(index, 'country', option?.value || '')
+                                    }
+                                    placeholder="Select a country..."
+                                    styles={customSelectStyles}
                                     isSearchable={true}
                                 />
                             </div>
+
                             <input
                                 type="url"
                                 value={rule.url}
-                                onChange={(e) => updateGeoRule(index, 'url', e.target.value)}
-                                placeholder="https://vn.example.com"
-                                className="w-full md:w-7/12 px-3 py-2.5 rounded-lg border bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                onChange={(e) =>
+                                    updateGeoRule(index, 'url', e.target.value)
+                                }
+                                placeholder="https://us.example.com"
+                                className="w-full md:w-7/12 px-4 py-2.5 rounded-xl bg-gray-900/50 border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                             />
+
                             <button
                                 type="button"
                                 onClick={() => removeGeoRule(index)}
-                                className="text-red-500 hover:text-red-700 px-2 font-bold"
+                                className="text-red-400 hover:text-red-300 p-2 hover:bg-red-400/10 rounded-lg transition-colors"
+                                title="Remove"
                             >
                                 ✕
                             </button>
@@ -83,9 +130,9 @@ export default function GeoTargetingSection({
                     <button
                         type="button"
                         onClick={addGeoRule}
-                        className="mt-2 text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-200 transition"
+                        className="mt-2 text-sm bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-lg hover:bg-blue-500/20 transition flex items-center gap-2"
                     >
-                        + Thêm Quốc gia
+                        <span>+</span> Add Country
                     </button>
                 </div>
             )}

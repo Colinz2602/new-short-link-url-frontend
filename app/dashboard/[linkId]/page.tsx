@@ -1,10 +1,13 @@
 'use client';
 
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useAnalytics } from '../../hooks/useAnalytics';
-import AnalyticsCharts from '../../components/dashboard/AnalyticsCharts';
-import QRCodeCard from '../../components/dashboard/QRCodeCard';
+
+import AnalyticsCharts from '../../components/analytics/AnalyticsCharts';
+import QRCodeCard from '../../components/analytics/QRCodeCard';
+import AnalyticsLoading from '../../components/analytics/AnalyticsLoading';
+import AnalyticsError from '../../components/analytics/AnalyticsError';
+import AnalyticsHeader from '../../components/analytics/AnalyticsHeader';
 
 export default function LinkAnalyticsPage() {
     const params = useParams();
@@ -13,38 +16,35 @@ export default function LinkAnalyticsPage() {
     const { data, loading, error, authLoading } = useAnalytics(linkId);
 
     if (authLoading || loading) {
-        return <main className="flex items-center justify-center min-h-screen"><p>Đang tải dữ liệu...</p></main>;
+        return <AnalyticsLoading />;
     }
 
     if (error) {
-        return (
-            <main className="max-w-4xl mx-auto p-8 text-center">
-                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg mb-4">{error}</div>
-                <Link href="/dashboard" className="text-blue-600 hover:underline">&larr; Quay lại Dashboard</Link>
-            </main>
-        );
+        return <AnalyticsError message={error} />;
     }
 
     if (!data) return null;
 
     return (
-        <main className="max-w-6xl mx-auto p-8">
-            <div className="mb-6">
-                <Link href="/dashboard" className="text-blue-600 hover:underline">
-                    &larr; Quay lại Dashboard
-                </Link>
-                <h1 className="text-3xl font-bold mt-2 break-all">
-                    Analytics cho: {data.link.full_short_url.replace('https://', '')}
-                </h1>
-                <a href={data.link.original_url} target="_blank" rel="noopener noreferrer" className="text-gray-500 break-all hover:text-gray-700">
-                    {data.link.original_url}
-                </a>
+        <main className="min-h-screen bg-brand-dark text-white relative overflow-hidden pb-20">
+            {/* Background Effects */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-600/10 rounded-full blur-[100px]"></div>
             </div>
 
-            {/* Truyền QRCodeCard vào bên trong AnalyticsCharts */}
-            <div className="mb-6">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-8">
+                {/* Header Section */}
+                <AnalyticsHeader
+                    shortUrl={data.link.full_short_url}
+                    originalUrl={data.link.original_url}
+                />
+
+                {/* Charts Section */}
                 <AnalyticsCharts
                     data={data.analytics}
+                    aiInsights={data.link.ai_insights}
+                    linkId={data.link.id}
                     rightSideContent={
                         <QRCodeCard
                             linkId={data.link.id}

@@ -19,9 +19,13 @@ export function useRedirect(slug: string) {
 
                 const res: any = await linkService.getLinkBySlug(slug);
 
-                const targetUrl = res.data?.targetUrl || res.targetUrl;
+                let targetUrl = res.data?.targetUrl || res.targetUrl;
 
                 if (!targetUrl) throw new Error('Link không tồn tại hoặc lỗi server.');
+
+                if (!/^https?:\/\//i.test(targetUrl)) {
+                    targetUrl = `https://${targetUrl}`;
+                }
 
                 setMessage('Đã tìm thấy! Đang chuyển hướng...');
                 window.location.replace(targetUrl);

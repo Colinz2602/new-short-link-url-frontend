@@ -43,14 +43,14 @@ export default function InputForm({
                 </div>
             </div>
 
-            {/* Input URL */}
+            {/* URL Input */}
             <div className="flex-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Link2 className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                     type="url"
-                    placeholder="Dán link dài của bạn vào đây..."
+                    placeholder="Paste your long URL here..."
                     className="w-full pl-12 pr-4 py-4 text-gray-800 outline-none rounded-xl text-lg placeholder:text-gray-400"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
@@ -58,7 +58,7 @@ export default function InputForm({
                 />
             </div>
 
-            {/* Submit Button */}
+            {/* Shorten Button */}
             <button
                 onClick={onSubmit}
                 disabled={loading}
@@ -67,7 +67,7 @@ export default function InputForm({
                 `}
             >
                 {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                {loading ? 'Đang xử lý...' : 'Rút gọn'}
+                {loading ? 'Processing...' : 'Shorten'}
             </button>
         </div>
     );

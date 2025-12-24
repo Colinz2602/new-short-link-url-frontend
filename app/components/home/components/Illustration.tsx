@@ -2,11 +2,11 @@ import { Check } from 'lucide-react';
 
 export default function Illustration() {
     return (
-        <div className="relative z-10 flex justify-center lg:justify-end animate-in slide-in-from-right-10 duration-700 delay-100 hidden md:flex">
+        <div className="relative z-10 hidden justify-center lg:justify-end animate-in slide-in-from-right-10 duration-700 delay-100 md:flex">
             <div className="relative w-full max-w-md aspect-square">
                 <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl"></div>
 
-                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-2xl mt-10 w-full h-full flex flex-col justify-between">
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-4xl shadow-2xl mt-10 w-full h-full flex flex-col justify-between">
                     <div className="flex gap-3 mb-6">
                         <div className="w-4 h-4 rounded-full bg-red-400/80"></div>
                         <div className="w-4 h-4 rounded-full bg-yellow-400/80"></div>

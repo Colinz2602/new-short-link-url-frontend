@@ -4,7 +4,9 @@ import { useCreateLink } from '../hooks/useCreateLink';
 import GeoTargetingSection from '../components/create/GeoTargetingSection';
 import SchedulingSection from '../components/create/SchedulingSection';
 import ResultCard from '../components/create/ResultCard';
-import PageHeader from '../components/common/PageHeader';
+import CreatePageHeader from '../components/create/CreatePageHeader';
+import MainInfoSection from '../components/create/MainCreateSection';
+import { Loader2, Calendar } from 'lucide-react';
 
 export default function CreatePage() {
     const {
@@ -18,91 +20,111 @@ export default function CreatePage() {
         scheduleAt, setScheduleAt,
         expireAt, setExpireAt,
         loadingMessage, error, successResult,
-        handleSubmit
+        handleSubmit,
+        // user, // Nếu không dùng user thì có thể bỏ
+        showDomainInput, setShowDomainInput,
+        newDomainName, setNewDomainName,
+        handleCreateDomain, isCreatingDomain
     } = useCreateLink();
 
     if (isAuthLoading) {
         return (
-            <main className="flex items-center justify-center min-h-screen">
-                <p>Đang tải...</p>
+            <main className="flex items-center justify-center min-h-screen bg-brand-dark text-white">
+                <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 flex justify-center">
-            <div className="w-full max-w-4xl bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl h-fit">
+        <main className="min-h-screen bg-brand-dark text-white relative overflow-hidden py-10 px-4">
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-600/10 rounded-full blur-[100px]"></div>
+            </div>
 
-                <PageHeader title="" showBulkImport={true} />
-                <h1 className="text-3xl font-bold mb-6 text-center">Tạo Link Rút Gọn Mới</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <div>
-                        <label className="block text-sm font-bold mb-2">Đường dẫn gốc</label>
-                        <input
-                            type="url"
-                            required
-                            placeholder="https://example.com/very-long-url"
-                            value={originalUrl}
-                            onChange={(e) => setOriginalUrl(e.target.value)}
-                            className="w-full px-4 py-3 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"
+            <div className="relative z-10 w-full max-w-5xl mx-auto">
+                <CreatePageHeader />
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl shadow-2xl">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+                        <MainInfoSection
+                            originalUrl={originalUrl}
+                            setOriginalUrl={setOriginalUrl}
+                            domains={domains}
+                            selectedDomain={selectedDomain}
+                            setSelectedDomain={setSelectedDomain}
+                            showDomainInput={showDomainInput}
+                            setShowDomainInput={setShowDomainInput}
+                            newDomainName={newDomainName}
+                            setNewDomainName={setNewDomainName}
+                            handleCreateDomain={handleCreateDomain}
+                            isCreatingDomain={isCreatingDomain}
+                            customSlug={customSlug}
+                            setCustomSlug={setCustomSlug}
+                        />
+
+                        {/* Advanced Settings */}
+                        <div className="bg-gray-900/30 rounded-2xl p-6 border border-gray-700/50 space-y-6">
+                            {/* Geo Targeting */}
+                            <div>
+                                <GeoTargetingSection
+                                    showAdvanced={showAdvanced}
+                                    setShowAdvanced={setShowAdvanced}
+                                    geoRules={geoRules}
+                                    addGeoRule={addGeoRule}
+                                    removeGeoRule={removeGeoRule}
+                                    updateGeoRule={updateGeoRule}
+                                />
+                            </div>
+
+                            <div className="w-full h-px bg-gray-700/50"></div>
+
+                            {/* Scheduling */}
+                            <div>
+                                <div className="flex items-center gap-2 text-sm font-bold text-orange-300 uppercase tracking-wider mb-4">
+                                    <Calendar className="w-4 h-4" /> Scheduling & Expiration
+                                </div>
+                                <SchedulingSection
+                                    scheduleAt={scheduleAt}
+                                    setScheduleAt={setScheduleAt}
+                                    expireAt={expireAt}
+                                    setExpireAt={setExpireAt}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={!!loadingMessage || !originalUrl}
+                            className={`
+                                w-full py-4 rounded-xl font-bold text-xl text-white shadow-lg transition-all transform hover:-translate-y-1
+                                flex items-center justify-center gap-3
+                                ${loadingMessage || !originalUrl
+                                    ? 'bg-gray-700 cursor-not-allowed opacity-50'
+                                    : 'bg-linear-to-r from-blue-600 via-teal-500 to-emerald-500 hover:shadow-teal-500/30'
+                                }
+                            `}
+                        >
+                            {loadingMessage ? (
+                                <>
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                    {loadingMessage}
+                                </>
+                            ) : (
+                                'Create Link'
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Result Section */}
+                    <div className="mt-8">
+                        <ResultCard
+                            error={error}
+                            successResult={successResult}
+                            geoRulesCount={geoRules.length}
                         />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-bold mb-2">Domain</label>
-                            <select
-                                value={selectedDomain}
-                                onChange={(e) => setSelectedDomain(e.target.value)}
-                                className="w-full px-4 py-3 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 outline-none"
-                            >
-                                {domains.map((d) => (
-                                    <option key={d.id} value={d.id}>{d.domain_name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold mb-2">Đường dẫn tùy chỉnh (Optional)</label>
-                            <input
-                                type="text"
-                                placeholder="my-campaign-2024"
-                                value={customSlug}
-                                onChange={(e) => setCustomSlug(e.target.value)}
-                                className="w-full px-4 py-3 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    <GeoTargetingSection
-                        showAdvanced={showAdvanced}
-                        setShowAdvanced={setShowAdvanced}
-                        geoRules={geoRules}
-                        addGeoRule={addGeoRule}
-                        removeGeoRule={removeGeoRule}
-                        updateGeoRule={updateGeoRule}
-                    />
-
-                    <SchedulingSection
-                        scheduleAt={scheduleAt}
-                        setScheduleAt={setScheduleAt}
-                        expireAt={expireAt}
-                        setExpireAt={setExpireAt}
-                    />
-
-                    <button
-                        type="submit"
-                        disabled={!!loadingMessage || !originalUrl}
-                        className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition disabled:opacity-50"
-                    >
-                        {loadingMessage || 'Tạo Link Ngay'}
-                    </button>
-                </form>
-
-                <ResultCard
-                    error={error}
-                    successResult={successResult}
-                    geoRulesCount={geoRules.length}
-                />
+                </div>
             </div>
         </main>
     );
