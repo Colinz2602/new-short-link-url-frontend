@@ -2,13 +2,34 @@
 
 import { ReactNode, useState } from 'react';
 import {
-    Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ChartOptions
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    ChartOptions,
+    Filler
 } from 'chart.js';
+
 import { Line, Bar } from 'react-chartjs-2';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { aiService } from '../../services/aiService';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
 ChartJS.defaults.color = '#9ca3af';
 ChartJS.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 

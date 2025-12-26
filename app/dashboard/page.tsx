@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMyLinks } from '../hooks/useMyLinks';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import LinkList from '../components/dashboard/LinkList';
 import Pagination from '../components/dashboard/Pagination';
+import { ApiLink } from '../types';
 
 export default function DashboardPage() {
     const {
@@ -12,7 +13,30 @@ export default function DashboardPage() {
         page, setPage, pageCount, authLoading
     } = useMyLinks();
 
+    const [guestLinks, setGuestLinks] = useState<ApiLink[]>([]);
     const [copiedId, setCopiedId] = useState<number | null>(null);
+
+    //Load link(no sign-up) từ LocalStorage
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const savedLinks = localStorage.getItem('guest_links');
+            if (savedLinks) {
+                try {
+                    const parsed = JSON.parse(savedLinks);
+                    if (Array.isArray(parsed)) {
+                        setGuestLinks(parsed);
+                    }
+                } catch (e) {
+                    console.error("Lỗi đọc guest links:", e);
+                }
+            }
+        }
+    }, []);
+
+    //Hợp nhất danh sách: Guest Links + Authenticated Links
+    const combinedLinks = [...guestLinks, ...links].sort((a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     const handleCopy = (text: string, id: number) => {
         navigator.clipboard.writeText(text);
@@ -53,7 +77,7 @@ export default function DashboardPage() {
 
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
                     <LinkList
-                        links={links}
+                        links={combinedLinks}
                         loading={loading}
                         copiedId={copiedId}
                         onCopy={handleCopy}
