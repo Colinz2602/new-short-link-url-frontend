@@ -1,8 +1,8 @@
 'use client';
 
-import Navbar from '../../components/Navbar/Navbar';
-import ToolCard from '../../components/tool/toolcard/ToolCard';
-import { useTools } from '../../hooks/useTools';
+import Navbar from '../components/Navbar/Navbar';
+import ToolCard from '../components/tool/toolcard/ToolCard';
+import { useTools } from '../hooks/useTools';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 export default function ToolsPage() {

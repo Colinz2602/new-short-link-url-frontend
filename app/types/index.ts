@@ -64,3 +64,32 @@ export interface AnalyticsData {
         topDevices: { device: string; count: string }[];
     };
 }
+
+export interface SubscriptionTier {
+    id: number;
+    documentId: string;
+    name: string;
+    description: string;
+    price: number;
+    currency: string;
+    period: 'month' | 'year' | 'day' | 'week'
+    interval: number;
+    stripe_product_id: string | null;
+    stripe_price_id: string | null;
+    features: string[];
+    limitation: string | null;
+    type: 'free' | 'bundle';
+    highlight: boolean;
+    is_active: boolean;
+}
+
+export interface Plan {
+    id: string;
+    name: string;
+    price: string;
+    period: string;
+    features: string[];
+    limitation: string;
+    type: string;
+    highlight: boolean;
+}

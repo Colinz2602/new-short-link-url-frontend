@@ -7,7 +7,18 @@ import { handleGoogleLogin } from '../../../components/auth/Login';
 
 export default function UserActions() {
     const { user } = useAuth();
-    const { plan } = useSubscription();
+    const { plan, startDate, endDate } = useSubscription();
+
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleDateString('en-EN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    };
 
     if (user) {
         return (
@@ -17,6 +28,11 @@ export default function UserActions() {
                     <span className="text-xs font-medium text-teal-400 bg-teal-400/10 px-2 py-0.5 rounded-full border border-teal-400/20 mt-1">
                         {plan}
                     </span>
+                    {startDate && endDate && plan !== 'Free Member' && (
+                        <span className="text-[10px] text-gray-400 mt-1 font-mono">
+                            {formatDate(startDate)} - {formatDate(endDate)}
+                        </span>
+                    )}
                 </div>
                 {user.photoURL && (
                     <img src={user.photoURL} alt="Avatar" className="w-9 h-9 rounded-full border-2 border-blue-500" />

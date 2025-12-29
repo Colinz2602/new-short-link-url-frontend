@@ -20,7 +20,7 @@ export default function ToolsPlatformPage() {
                 sessionStorage.setItem('tools_page_reloaded', 'true');
                 window.location.reload();
             } else {
-                router.push('/tool/toolcard');
+                router.push('/tool');
             }
         }
     }, [user, loading, router]);

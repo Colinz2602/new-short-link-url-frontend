@@ -1,10 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-// Đảm bảo đường dẫn import đúng với cấu trúc thư mục của bạn
-import Logo from './components/Logo';
-import PlatformDropdown from './components/PlatformDropdown';
-import UserActions from './components/UserActions';
+import Logo from '../navbar/components/Logo';
+import PlatformDropdown from '../navbar/components/PlatformDropdown';
+import UserActions from '../navbar/components/UserActions';
 
 export default function Navbar() {
     return (

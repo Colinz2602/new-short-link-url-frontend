@@ -8,8 +8,11 @@ export interface Tool {
     price: number;
     slug: string;
     active: boolean;
+    period: 'month' | 'year' | 'week' | 'day';
+    interval: number;
     is_active_for_user?: boolean;
     stripe_price_id?: string;
+    stripe_product_id?: string;
 }
 
 export const toolService = {

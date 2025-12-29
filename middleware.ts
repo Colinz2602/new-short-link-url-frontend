@@ -26,7 +26,7 @@ export function middleware(req: NextRequest) {
         '/favicon.ico',
         '/platform/link-management',
         '/tool/script-generator',
-        '/tool/toolcard',
+        '/tool',
         '/tool/facebook-scraper',
         '/platform/smarttools'
     ];

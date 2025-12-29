@@ -40,7 +40,7 @@ export default function ResultSection({ result }: ResultSectionProps) {
                         <Hash className="w-5 h-5" /> Keywords & Hashtags
                     </h3>
                     <button
-                        onClick={() => handleCopy(result.keywords.join(' '), 'keywords')}
+                        onClick={() => handleCopy((result.keywords || []).join(' '), 'keywords')}
                         className="text-gray-400 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
                         title="Copy all"
                     >
@@ -48,11 +48,15 @@ export default function ResultSection({ result }: ResultSectionProps) {
                     </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    {result.keywords.map((tag, idx) => (
-                        <span key={idx} className="bg-purple-500/20 text-purple-200 px-3 py-1 rounded-full text-sm border border-purple-500/30">
-                            #{tag.replace(/^#/, '')}
-                        </span>
-                    ))}
+                    {Array.isArray(result.keywords) && result.keywords.length > 0 ? (
+                        result.keywords.map((tag, idx) => (
+                            <span key={idx} className="bg-purple-500/20 text-purple-200 px-3 py-1 rounded-full text-sm border border-purple-500/30">
+                                #{tag.replace(/^#/, '')}
+                            </span>
+                        ))
+                    ) : (
+                        <span className="text-gray-400 text-sm italic">No keywords generated</span>
+                    )}
                 </div>
             </div>
         </div>

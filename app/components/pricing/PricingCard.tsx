@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plan } from './package';
+import { Plan } from '../../types';
 
 const CheckIcon = () => (
     <svg className="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

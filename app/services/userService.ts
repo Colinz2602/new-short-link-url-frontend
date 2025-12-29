@@ -9,6 +9,10 @@ export const userService = {
         return axiosClient.get('/api/subscriptions/me');
     },
 
+    getSubscriptionTiers: () => {
+        return axiosClient.get('/api/subscription-tiers?filters[is_active][$eq]=true&sort=price:asc');
+    },
+
     createCheckoutSession: (priceId: string, planType: string) => {
         return axiosClient.post('/api/payment/checkout', {
             priceId,

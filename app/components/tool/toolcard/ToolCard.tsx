@@ -15,7 +15,15 @@ export default function ToolCard({ tool }: ToolCardProps) {
     const [isBuying, setIsBuying] = useState(false);
     const { user } = useAuth();
     const router = useRouter();
+
     const hasAccess = tool.price === 0 || tool.is_active_for_user;
+
+    const renderPeriod = () => {
+        if (tool.interval > 1) {
+            return `every ${tool.interval} ${tool.period}s`;
+        }
+        return `/${tool.period}`;
+    };
 
     const handleBuy = async () => {
         if (!user) {
@@ -62,7 +70,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
                     </span>
                 ) : (
                     <span className="bg-purple-500/20 text-purple-300 text-xs font-bold px-3 py-1 rounded-full border border-purple-500/30">
-                        ${tool.price}
+                        ${tool.price} {renderPeriod()}
                     </span>
                 )}
             </div>
@@ -95,7 +103,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
                         </>
                     ) : (
                         <>
-                            <span>Buy for ${tool.price}</span>
+                            <span>Buy ${tool.price}{renderPeriod()}</span>
                             <ShoppingCart className="w-4 h-4 transition-transform group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1" />
                         </>
                     )}

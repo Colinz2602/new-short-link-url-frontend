@@ -1,11 +1,16 @@
 'use client';
 
 import { useGuestShortener } from '../../hooks/useGuestShortener';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 import Illustration from './components/Illustration';
 import InputForm from './components/InputForm';
 import LinkHistoryList from './components/LinkHistoryList';
 
 export default function InputSection() {
+    const { user } = useAuth();
+    const router = useRouter();
+
     const {
         url, setUrl,
         loading,
@@ -15,6 +20,14 @@ export default function InputSection() {
         selectedDomain, setSelectedDomain,
         handleShorten
     } = useGuestShortener();
+
+    const handleShortenCheck = () => {
+        if (user) {
+            router.push('/create');
+        } else {
+            handleShorten();
+        }
+    };
 
     return (
         <section className="relative pt-10 pb-20 px-4 overflow-hidden min-h-[600px]">
@@ -38,7 +51,7 @@ export default function InputSection() {
                         selectedDomain={selectedDomain}
                         setSelectedDomain={setSelectedDomain}
                         loading={loading}
-                        onSubmit={handleShorten}
+                        onSubmit={handleShortenCheck}
                     />
 
                     {error && (
