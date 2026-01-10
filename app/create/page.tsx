@@ -21,7 +21,6 @@ export default function CreatePage() {
         expireAt, setExpireAt,
         loadingMessage, error, successResult,
         handleSubmit,
-        // user, // Nếu không dùng user thì có thể bỏ
         showDomainInput, setShowDomainInput,
         newDomainName, setNewDomainName,
         handleCreateDomain, isCreatingDomain

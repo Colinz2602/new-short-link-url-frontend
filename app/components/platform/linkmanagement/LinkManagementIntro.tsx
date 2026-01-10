@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { handleGoogleLogin } from '../../auth/Login'; // Điều chỉnh đường dẫn import cho đúng với dự án của bạn
+import { handleGoogleLogin } from '../../auth/Login';
 
 export default function LinkManagementIntro() {
     return (

@@ -25,7 +25,7 @@ export default function ResultCard({ icon, title, content, onCopy, isCopied }: R
                 </button>
             </div>
             <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed font-mono text-sm">{content}</p>
+                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed text-sm">{content}</p>
             </div>
         </div>
     );

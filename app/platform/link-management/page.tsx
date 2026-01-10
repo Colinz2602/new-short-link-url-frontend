@@ -23,7 +23,7 @@ export default function LinkManagementPage() {
             <main className="min-h-screen bg-brand-dark flex items-center justify-center text-white">
                 <div className="flex flex-col items-center gap-2">
                     <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-                    <p className="text-gray-400 text-sm">Đang kiểm tra trạng thái...</p>
+                    <p className="text-gray-400 text-sm">Checking the status...</p>
                 </div>
             </main>
         );

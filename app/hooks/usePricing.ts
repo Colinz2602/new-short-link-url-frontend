@@ -71,8 +71,7 @@ export function usePricing() {
 
     const handleCheckout = async (priceId: string, planType: string) => {
         if (!user) {
-            alert('Vui lòng đăng nhập để đăng ký gói.');
-            // Hoặc chuyển hướng: window.location.href = '/auth/login';
+            alert('Please log in to register for a package.');
             return;
         }
 
@@ -85,12 +84,12 @@ export function usePricing() {
             if (checkoutUrl) {
                 window.location.href = checkoutUrl;
             } else {
-                alert('Lỗi: Không lấy được link thanh toán từ server (Empty URL).');
+                alert('Error: Unable to retrieve payment link from server (Empty URL).');
             }
 
         } catch (error: any) {
-            const msg = error?.response?.data?.error?.message || error.message || 'Đã có lỗi xảy ra';
-            alert(`Lỗi: ${msg}`);
+            const msg = error?.response?.data?.error?.message || error.message || 'An error occurred';
+            alert(`Error: ${msg}`);
         } finally {
             setProcessingPlanId(null);
         }

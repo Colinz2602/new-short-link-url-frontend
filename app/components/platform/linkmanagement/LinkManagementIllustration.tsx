@@ -23,7 +23,7 @@ export default function LinkAnalyticsIllustration() {
                     </div>
 
                     <div className="flex-1 p-5 space-y-5">
-                        <div className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-mono font-semibold border border-blue-100 truncate">
+                        <div className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold border border-blue-100 truncate">
                             yourbrand.co/abc123
                         </div>
 

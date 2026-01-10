@@ -29,7 +29,7 @@ axiosClient.interceptors.response.use(
     },
     (error) => {
         if (error.response?.status === 401) {
-            console.error("Token hết hạn hoặc không hợp lệ.");
+            console.error("The token has expired or is invalid.");
             localStorage.removeItem('strapi_token');
             window.location.href = '/';
         }

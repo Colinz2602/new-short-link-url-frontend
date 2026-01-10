@@ -17,7 +17,7 @@ export function useGuestShortener() {
                 try {
                     setCreatedLinks(JSON.parse(savedLinks));
                 } catch (e) {
-                    console.error("Lỗi đọc lịch sử:", e);
+                    console.error("History reading error:", e);
                 }
             }
         }
@@ -44,7 +44,7 @@ export function useGuestShortener() {
     const handleShorten = async () => {
         if (!url) return;
         if (!selectedDomain) {
-            setError("Hệ thống đang khởi động, vui lòng thử lại sau giây lát.");
+            setError("System is initializing, please try again in a moment.");
             return;
         }
 
@@ -69,12 +69,8 @@ export function useGuestShortener() {
 
             setUrl('');
         } catch (err: any) {
-            const msg = err?.error?.message || err?.response?.data?.error?.message || err?.message || "Có lỗi xảy ra khi tạo link.";
-            if (msg.includes("50 links")) {
-                setError("Bạn đã đạt giới hạn miễn phí (50 link). Hãy đăng nhập để tiếp tục!");
-            } else {
-                setError(msg);
-            }
+            const msg = err?.error?.message || err?.response?.data?.error?.message || err?.message || "An error occurred while creating the link.";
+            setError(msg);
         } finally {
             setLoading(false);
         }

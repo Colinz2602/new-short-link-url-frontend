@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { linkService } from '../services/linkService';
 
 export function useRedirect(slug: string) {
-    const [message, setMessage] = useState('Đang tìm link của bạn...');
+    const [message, setMessage] = useState('Looking for your link...');
     const [error, setError] = useState<string | null>(null);
     const hasExecuted = useRef(false);
 
@@ -14,24 +14,30 @@ export function useRedirect(slug: string) {
         const handleRedirect = async () => {
 
             try {
+                const searchParams = new URLSearchParams(window.location.search);
+                const mockIp = searchParams.get('mock_ip');
+
                 linkService.trackClick(slug, document.referrer || 'direct')
                     .catch(err => console.error('Analytics error:', err));
 
-                const res: any = await linkService.getLinkBySlug(slug);
+                const res: any = await linkService.getLinkBySlug(
+                    slug,
+                    mockIp ? { mock_ip: mockIp } : {}
+                );
 
                 let targetUrl = res.data?.targetUrl || res.targetUrl;
 
-                if (!targetUrl) throw new Error('Link không tồn tại hoặc lỗi server.');
+                if (!targetUrl) throw new Error('The link does not exist, or there is a server error.');
 
                 if (!/^https?:\/\//i.test(targetUrl)) {
                     targetUrl = `https://${targetUrl}`;
                 }
 
-                setMessage('Đã tìm thấy! Đang chuyển hướng...');
+                setMessage('Found! Redirecting...');
                 window.location.replace(targetUrl);
 
             } catch (err: any) {
-                setError(err.message || err.error?.message || 'Lỗi không xác định.');
+                setError(err.message || err.error?.message || 'An error occurred.');
                 setMessage('');
             }
         };

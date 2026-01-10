@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Plus, Sparkles } from 'lucide-react';
-import { useSubscription } from '../../hooks/useSubscription';
 
 export default function DashboardHeader() {
     return (

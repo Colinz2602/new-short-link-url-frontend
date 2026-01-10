@@ -10,9 +10,14 @@ export const linkService = {
         return axiosClient.post<any, ApiLink>('/api/links', payload);
     },
 
-    getLinkBySlug: (slug: string) => {
+    getLinkBySlug: (slug: string, queryParams?: Record<string, any>) => {
         const host = typeof window !== 'undefined' ? window.location.host : '';
-        return axiosClient.get(`/api/links/${slug}?host=${host}`);
+        return axiosClient.get(`/api/links/${slug}`, {
+            params: {
+                host,
+                ...queryParams
+            }
+        });
     },
 
     bulkImport: (formData: FormData) => {

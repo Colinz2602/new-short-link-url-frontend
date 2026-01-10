@@ -4,7 +4,7 @@ import { Domain } from '../../types';
 interface MainInfoSectionProps {
     originalUrl: string;
     setOriginalUrl: (val: string) => void;
-    domains: Domain[]; // Sử dụng Type đã import
+    domains: Domain[];
     selectedDomain: string;
     setSelectedDomain: (val: string) => void;
     showDomainInput: boolean;

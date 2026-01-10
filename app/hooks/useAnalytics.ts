@@ -20,7 +20,7 @@ export function useAnalytics(linkId: string) {
                 setData(result.data);
             } catch (err: any) {
                 console.error('[Frontend Hook] Error:', err);
-                setError(err?.error?.message || err?.message || 'Lỗi tải dữ liệu');
+                setError(err?.error?.message || err?.message || 'Error loading data');
             } finally {
                 setLoading(false);
             }

@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useAnalytics } from '../../hooks/useAnalytics';
 
 import AnalyticsCharts from '../../components/analytics/AnalyticsCharts';
+import AIInsightCard from '../../components/analytics/AIInsightCard';
 import QRCodeCard from '../../components/analytics/QRCodeCard';
 import AnalyticsLoading from '../../components/analytics/AnalyticsLoading';
 import AnalyticsError from '../../components/analytics/AnalyticsError';
@@ -40,11 +41,15 @@ export default function LinkAnalyticsPage() {
                     originalUrl={data.link.original_url}
                 />
 
+                {/* AI Insights Section */}
+                <AIInsightCard
+                    insight={data.link.ai_insights}
+                    linkId={data.link.id}
+                />
+
                 {/* Charts Section */}
                 <AnalyticsCharts
                     data={data.analytics}
-                    aiInsights={data.link.ai_insights}
-                    linkId={data.link.id}
                     rightSideContent={
                         <QRCodeCard
                             linkId={data.link.id}

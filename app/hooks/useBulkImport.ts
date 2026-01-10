@@ -29,7 +29,7 @@ export function useBulkImport() {
             const realResult = response.data || response;
             setResult(realResult);
         } catch (err: any) {
-            setError(err.message || 'Lỗi upload file.');
+            setError(err.message || 'Error uploading file.');
         } finally {
             setUploading(false);
         }

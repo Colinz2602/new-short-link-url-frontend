@@ -11,7 +11,7 @@ interface LinkItemProps {
 export default function LinkItem({ link, copiedId, onCopy }: LinkItemProps) {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
-            day: '2-digit', month: '2-digit', year: 'numeric'
+            day: '2-digit', month: '2-digit', year: 'numeric',
         });
     };
 
@@ -59,7 +59,7 @@ export default function LinkItem({ link, copiedId, onCopy }: LinkItemProps) {
             <div className="col-span-1 md:col-span-2 flex items-center md:justify-center pl-11 md:pl-0">
                 <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-1.5 rounded-lg border border-white/5">
                     <BarChart2 className="w-4 h-4 text-teal-400" />
-                    <span className="font-mono font-bold text-white">
+                    <span className="font-bold text-white">
                         {link.click_count}
                     </span>
                     <span className="text-xs text-gray-500 hidden md:inline">

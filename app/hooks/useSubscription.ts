@@ -47,7 +47,7 @@ export function useSubscription() {
                 if (subData.active_until) setEndDate(subData.active_until);
 
             } catch (err) {
-                console.error('Lỗi lấy gói:', err);
+                console.error('Error getting package:', err);
                 setPlan('Free Member');
             }
         };

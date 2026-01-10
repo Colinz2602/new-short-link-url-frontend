@@ -7,12 +7,20 @@ interface SchedulingSectionProps {
     setExpireAt: (val: string) => void;
 }
 
+const getLocalISOString = () => {
+    const now = new Date();
+    // Chuyển UTC về Local time trong chuỗi ISO
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+};
+
 export default function SchedulingSection({
     scheduleAt,
     setScheduleAt,
     expireAt,
     setExpireAt
 }: SchedulingSectionProps) {
+    const minDateTime = getLocalISOString();
     return (
         <div className="w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -41,7 +49,7 @@ export default function SchedulingSection({
                         type="datetime-local"
                         value={expireAt}
                         onChange={(e) => setExpireAt(e.target.value)}
-                        min={scheduleAt || new Date().toISOString().slice(0, 16)}
+                        min={scheduleAt || minDateTime}
                         className="w-full px-4 py-3 rounded-xl bg-gray-900/50 border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm scheme-dark"
                     />
                     <p className="text-[10px] text-gray-500">

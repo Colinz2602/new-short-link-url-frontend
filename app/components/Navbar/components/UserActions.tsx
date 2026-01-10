@@ -4,22 +4,43 @@ import { useAuth } from '../../../context/AuthContext';
 import { useSubscription } from '../../../hooks/useSubscription';
 import { authService } from '../../../services/authService';
 import { handleGoogleLogin } from '../../../components/auth/Login';
+import { useEffect, useState } from 'react';
 
 export default function UserActions() {
     const { user } = useAuth();
     const { plan, startDate, endDate } = useSubscription();
+    const [, forceUpdate] = useState(0);
+
+    useEffect(() => {
+        const i = setInterval(() => forceUpdate(v => v + 1), 60000);
+        return () => clearInterval(i);
+    }, []);
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return '';
+
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return '';
-        return date.toLocaleDateString('en-EN', {
+
+        return date.toLocaleString('en-EN', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric'
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
         });
     };
 
+    const getProgressWidth = (start: string, end: string) => {
+        const startTime = new Date(start).getTime();
+        const endTime = new Date(end).getTime();
+        const now = Date.now();
+
+        if (now <= startTime) return '0%';
+        if (now >= endTime) return '100%';
+
+        return `${((now - startTime) / (endTime - startTime)) * 100}%`;
+    };
     if (user) {
         return (
             <>
@@ -29,10 +50,22 @@ export default function UserActions() {
                         {plan}
                     </span>
                     {startDate && endDate && plan !== 'Free Member' && (
-                        <span className="text-[10px] text-gray-400 mt-1 font-mono">
-                            {formatDate(startDate)} - {formatDate(endDate)}
-                        </span>
+                        <div className="mt-1 w-full max-w-[220px] space-y-1">
+                            <span className="block text-[9px] text-gray-400 text-right">
+                                {formatDate(startDate)} - {formatDate(endDate)}
+                            </span>
+
+                            <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-blue-500 transition-all duration-500"
+                                    style={{
+                                        width: getProgressWidth(startDate, endDate),
+                                    }}
+                                />
+                            </div>
+                        </div>
                     )}
+
                 </div>
                 {user.photoURL && (
                     <img src={user.photoURL} alt="Avatar" className="w-9 h-9 rounded-full border-2 border-blue-500" />

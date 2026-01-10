@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -16,8 +16,6 @@ import {
 } from 'chart.js';
 
 import { Line, Bar } from 'react-chartjs-2';
-import { Sparkles, Loader2 } from 'lucide-react';
-import { aiService } from '../../services/aiService';
 
 ChartJS.register(
     CategoryScale,
@@ -30,12 +28,15 @@ ChartJS.register(
     Legend,
     Filler
 );
+ChartJS.defaults.font.family = 'var(--font-geist-sans)';
 ChartJS.defaults.color = '#9ca3af';
 ChartJS.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return date.toLocaleDateString('en-GB', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+    });
 };
 
 interface AnalyticsChartsProps {
@@ -46,77 +47,9 @@ interface AnalyticsChartsProps {
         topDevices: any[];
     };
     rightSideContent?: ReactNode;
-    aiInsights?: string;
-    linkId?: number;
 }
 
-const AIInsightCard = ({ insight, linkId }: { insight?: string, linkId?: number }) => {
-    const [loading, setLoading] = useState(false);
-
-    const handleAnalyze = async () => {
-        if (!linkId) {
-            return;
-        }
-
-        setLoading(true);
-        try {
-            await aiService.generateInsights(linkId);
-            console.log("👉 [Client] API finished, reloading...");
-            window.location.reload();
-        } catch (error: any) {
-            alert("Lỗi: " + (error.message || "Không thể phân tích"));
-        } finally {
-            setLoading(false);
-        }
-    };
-    let parsedData = null;
-    try {
-        if (insight) {
-            parsedData = JSON.parse(insight);
-        }
-    } catch (e) {
-        console.error("Lỗi parse JSON insight", e);
-    }
-    return (
-        <div className="bg-linear-to-r from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"></div>
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-5 relative z-10">
-                <div className="bg-linear-to-b from-indigo-500 to-purple-600 p-3 rounded-xl shadow-inner shrink-0">
-                    <span className="text-2xl">🧠</span>
-                </div>
-                <div className="flex-1 w-full">
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-transparent bg-clip-text bg-linear-to-r from-indigo-200 to-purple-200 font-bold text-lg mb-1 flex items-center gap-2">
-                            AI Insights
-                        </h3>
-                        {/* Nút bấm kích hoạt AI */}
-                        <button
-                            onClick={handleAnalyze}
-                            disabled={loading}
-                            className="text-xs flex items-center gap-1 bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition disabled:opacity-50"
-                        >
-                            {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                            {loading ? "Analyzing..." : "Analyze Now"}
-                        </button>
-                    </div>
-                    <div className="text-indigo-100/80 leading-relaxed text-sm md:text-base mt-2">
-                        {parsedData ? (
-                            <div className="space-y-2 mt-3">
-                                <p><span className="font-bold text-yellow-400">Golden Hour:</span> {parsedData.goldenHour}</p>
-                                <p><span className="font-bold text-blue-400">Strategy:</span> {parsedData.adScheduleStrategy}</p>
-                                <p><span className="font-bold text-green-400">Insight:</span> {parsedData.insight}</p>
-                            </div>
-                        ) : (
-                            <p>{insight || "Chưa có dữ liệu phân tích. Nhấn 'Analyze Now' để AI đề xuất chiến lược Ads."}</p>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default function AnalyticsCharts({ data, rightSideContent, aiInsights, linkId }: AnalyticsChartsProps) { // [MỚI] nhận linkId
+export default function AnalyticsCharts({ data, rightSideContent }: AnalyticsChartsProps) {
     const clicksLabels = data.clicksOverTime.map(item => formatDate(item.date));
     const clicksValues = data.clicksOverTime.map(item => typeof item.count === 'number' ? item.count : parseInt(item.count, 10));
 
@@ -175,9 +108,6 @@ export default function AnalyticsCharts({ data, rightSideContent, aiInsights, li
 
     return (
         <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-            {/* [MỚI] Hiển thị AI Insight Card ở đây */}
-            <AIInsightCard insight={aiInsights} linkId={linkId} />
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                     <ChartCard title="Click Overview" className="h-full">

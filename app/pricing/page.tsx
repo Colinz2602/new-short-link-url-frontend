@@ -1,16 +1,18 @@
 'use client';
 
 import { usePricing } from '../hooks/usePricing';
+import { useSubscription } from '../hooks/useSubscription'; //
 import Navbar from '../components/Navbar/Navbar';
 import PricingHeader from '../components/pricing/PricingHeader';
 import PricingCard from '../components/pricing/PricingCard';
 
 export default function PricingPage() {
-    // Lấy thêm plans và loading từ hook
+    // Lấy thông tin subscription hiện tại để so sánh
     const { user, processingPlanId, handleCheckout, plans, loading } = usePricing();
+    const { plan: currentPlanName } = useSubscription(); // Lấy tên gói hiện tại
 
     return (
-        <div className="min-h-screen bg-brand-dark dark:bg-gray-900 font-sans">
+        <div className="min-h-screen bg-brand-dark dark:bg-gray-900">
             <Navbar />
 
             <PricingHeader />
@@ -30,11 +32,12 @@ export default function PricingPage() {
                                     user={user}
                                     processingPlanId={processingPlanId}
                                     onCheckout={handleCheckout}
+                                    isOwned={currentPlanName === plan.name}
                                 />
                             ))
                         ) : (
                             <div className="col-span-3 text-center text-gray-400">
-                                Hiện chưa có gói dịch vụ nào.
+                                There are currently no service packages available.
                             </div>
                         )}
                     </div>

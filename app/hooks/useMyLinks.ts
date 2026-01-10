@@ -17,17 +17,16 @@ export function useMyLinks() {
         if (authLoading || !user) return;
 
         const fetchLinks = async (retryCount = 0) => {
-            // [SỬA]: Kiểm tra Token trước khi gọi
+            // Kiểm tra Token trước khi gọi
             const token = localStorage.getItem('strapi_token');
 
             if (!token) {
                 if (retryCount < 10) { // Thử lại tối đa 10 lần (mỗi lần 200ms)
-                    // console.log(`⏳ Chưa thấy Token, đợi đồng bộ... (Lần ${retryCount + 1})`);
                     setTimeout(() => fetchLinks(retryCount + 1), 200);
                     return;
                 } else {
                     // Hết thời gian chờ mà vẫn không có token -> Lỗi thật
-                    setError('Phiên đăng nhập không hợp lệ (Missing Token). Vui lòng đăng nhập lại.');
+                    setError('Invalid login session (Missing Token). Please log in again.');
                     setLoading(false);
                     return;
                 }
@@ -41,10 +40,8 @@ export function useMyLinks() {
                 setPageCount(res.meta.pagination.pageCount);
             } catch (err: any) {
                 if (err?.error) {
-                    console.error("--> Chi tiết lỗi Strapi:", JSON.stringify(err.error, null, 2));
                     setError(err.error.message);
                 } else {
-                    console.error("--> Response Data:", JSON.stringify(err.response?.data, null, 2));
                     setError(err.message || 'Không thể tải danh sách link.');
                 }
             } finally {

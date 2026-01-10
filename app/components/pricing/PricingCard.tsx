@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Plan } from '../../types';
-
+import { Check } from 'lucide-react';
 const CheckIcon = () => (
     <svg className="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -12,9 +12,10 @@ interface PricingCardProps {
     user: any;
     processingPlanId: string | null;
     onCheckout: (planId: string, type: string) => void;
+    isOwned?: boolean
 }
 
-const PricingCard = ({ plan, user, processingPlanId, onCheckout }: PricingCardProps) => {
+const PricingCard = ({ plan, user, processingPlanId, onCheckout, isOwned }: PricingCardProps) => {
     return (
         <div
             className={`
@@ -25,6 +26,7 @@ const PricingCard = ({ plan, user, processingPlanId, onCheckout }: PricingCardPr
                 }
             `}
         >
+            {/* Nhãn Most Popular (chỉ hiện nếu không phải current plan) */}
             {plan.highlight && (
                 <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-lg uppercase tracking-wide">
                     Most Popular
@@ -55,10 +57,17 @@ const PricingCard = ({ plan, user, processingPlanId, onCheckout }: PricingCardPr
 
             {/* Button */}
             <div className="mt-auto">
-                {plan.type === 'free' ? (
+                {isOwned ? (
+                    <button
+                        disabled
+                        className="w-full py-3.5 rounded-xl font-bold bg-green-500/10 text-green-600 border border-green-500/20 cursor-default flex items-center justify-center gap-2"
+                    >
+                        <Check className="w-5 h-5" /> Owned
+                    </button>
+                ) : plan.type === 'free' ? (
                     <Link href={user ? "/dashboard" : "/auth/login"} className="block w-full">
                         <button className="w-full py-3.5 rounded-xl font-bold border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-gray-400 hover:text-gray-800 transition">
-                            Miễn phí
+                            Free
                         </button>
                     </Link>
                 ) : (
@@ -66,16 +75,17 @@ const PricingCard = ({ plan, user, processingPlanId, onCheckout }: PricingCardPr
                         onClick={() => onCheckout(plan.id, plan.type)}
                         disabled={processingPlanId !== null}
                         className={`w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition transform active:scale-95 disabled:opacity-70
-                            ${plan.highlight
+                ${plan.highlight
                                 ? 'bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30'
                                 : 'bg-gray-900 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600'
                             }
-                        `}
+            `}
                     >
-                        {processingPlanId === plan.id ? 'Đang xử lý...' : 'Chọn gói này'}
+                        {processingPlanId === plan.id ? 'Processing...' : 'Choose this plan'}
                     </button>
                 )}
             </div>
+
         </div>
     );
 };

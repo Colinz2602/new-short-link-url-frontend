@@ -21,7 +21,7 @@ export default function ToolsIllustration() {
                             <div className="w-3 h-3 rounded-full bg-yellow-500/60"></div>
                             <div className="w-3 h-3 rounded-full bg-green-500/60"></div>
                         </div>
-                        <div className="relative z-10 mr-8 text-[10px] md:text-xs font-mono text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30">
+                        <div className="relative z-10 mr-8 text-[10px] md:text-xs text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30">
                             AI Script Generator
                         </div>
                     </div>

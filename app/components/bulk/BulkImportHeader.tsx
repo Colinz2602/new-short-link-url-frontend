@@ -12,7 +12,7 @@ export default function BulkImportHeader() {
             </Link>
 
             <div className="text-center">
-                <h1 className="font-[Inter] text-4xl md:text-5xl font-extrabold mb-4 pb-2 tracking-tight bg-clip-text text-transparent bg-linear-to-r from-green-400 via-teal-400 to-blue-500">
+                <h1 className="text-4xl md:text-5xl font-extrabold mb-4 pb-2 tracking-tight bg-clip-text text-transparent bg-linear-to-r from-green-400 via-teal-400 to-blue-500">
                     Bulk Import
                 </h1>
             </div>

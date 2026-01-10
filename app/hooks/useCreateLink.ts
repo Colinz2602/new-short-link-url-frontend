@@ -50,7 +50,7 @@ export function useCreateLink() {
             }
             return allDomains;
         } catch (err) {
-            console.error("Lỗi tải domain", err);
+            console.error("Error loading domain", err);
             return [];
         }
     };
@@ -66,30 +66,23 @@ export function useCreateLink() {
 
     const handleCreateDomain = async () => {
         if (!newDomainName) return;
-        const hasCustomDomain = domains.some(d => d.type === 'custom');
-
-        if (hasCustomDomain) {
-            setError('Mỗi tài khoản chỉ được tạo 1 Custom Domain.');
-            return;
-        }
         setIsCreatingDomain(true);
         setError(null);
         try {
             const res: any = await linkService.createDomain(newDomainName);
-            const newDomain = res.data || res; // Strapi v5 trả về data
+            const newDomain = res.data || res;
 
             // Refresh list và chọn domain mới
             const updatedList = await fetchDomains();
             setDomains(updatedList);
-            setSelectedDomain(newDomain.id || newDomain.documentId); // Chọn domain vừa tạo
+            setSelectedDomain(newDomain.id || newDomain.documentId);
 
             // Reset UI
             setShowDomainInput(false);
             setNewDomainName('');
 
         } catch (err: any) {
-            console.error(err);
-            const msg = err?.error?.message || err?.message || 'Không thể tạo domain';
+            const msg = err?.error?.message || err?.message || 'Unable to create domain';
             setError(msg);
         } finally {
             setIsCreatingDomain(false);
@@ -114,7 +107,7 @@ export function useCreateLink() {
     // Submit Function
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setLoadingMessage('Đang xử lý...');
+        setLoadingMessage('Processing...');
         setError(null);
         setSuccessResult(null);
 
@@ -124,14 +117,19 @@ export function useCreateLink() {
             const verifyRes: any = await linkService.verifyLink(originalUrl);
             const isSafe = verifyRes.data ? verifyRes.data.isSafe : verifyRes.isSafe;
             if (isSafe === false) {
-                throw new Error('Link không an toàn theo Google Safe Browsing.');
+                throw new Error('The link is unsafe according to Google Safe Browsing.');
             }
 
-            // 2. Prepare Payload
+            // Prepare Payload
             const geoTargetingJson: Record<string, string> = {};
             geoRules.forEach(rule => {
                 if (rule.url?.trim()) geoTargetingJson[rule.country] = rule.url;
             });
+
+            const toUTC = (localDateString: string) => {
+                if (!localDateString) return null;
+                return new Date(localDateString).toISOString();
+            };
 
             const payload: CreateLinkPayload = {
                 original_url: originalUrl,
@@ -139,11 +137,11 @@ export function useCreateLink() {
                 domain: selectedDomain,
                 verified_safe: true,
                 geo_targeting: Object.keys(geoTargetingJson).length > 0 ? geoTargetingJson : null,
-                expire_at: expireAt || null,
-                schedule_at: scheduleAt || null
+                expire_at: toUTC(expireAt),
+                schedule_at: toUTC(scheduleAt)
             };
 
-            // 3. Call API
+            // Call API
             const res: any = await linkService.createLink(payload);
             const createdLink = res.data || res;
             setSuccessResult(createdLink.full_short_url);
@@ -155,7 +153,7 @@ export function useCreateLink() {
             setExpireAt('');
 
         } catch (err: any) {
-            setError(err?.error?.message || err.message || 'Lỗi tạo link');
+            setError(err?.error?.message || err.message || 'Error creating link');
         } finally {
             setLoadingMessage(null);
         }

@@ -11,16 +11,12 @@ export function useQRCode(linkId: number, existingQrUrl?: string) {
     const getValidQrUrl = (url?: string) => {
         if (!url) return null;
         if (url.startsWith('http')) return url;
-        console.log('[DEBUG QRCode] Base Strapi URL:', STRAPI_URL);
-        console.log('[DEBUG QRCode] Relative URL from DB:', url);
         return `${STRAPI_URL}${url}`;
     };
 
     useEffect(() => {
         if (existingQrUrl) {
-            console.log('[DEBUG QRCode] Existing URL Found:', existingQrUrl); // Thêm dòng này
             const finalUrl = getValidQrUrl(existingQrUrl);
-            console.log('[DEBUG QRCode] Final Display URL:', finalUrl); // Thêm dòng này
             setQrUrl(finalUrl);
         }
     }, [existingQrUrl]);
@@ -40,7 +36,7 @@ export function useQRCode(linkId: number, existingQrUrl?: string) {
                 setQrUrl(finalUrl);
             }
         } catch (error) {
-            console.error("[CLIENT ERROR] Lỗi tạo QR:", error);
+            console.error("[CLIENT ERROR] QR Code Creation Error:", error);
         } finally {
             setIsLoading(false);
         }

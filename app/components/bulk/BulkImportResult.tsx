@@ -30,7 +30,7 @@ export default function BulkImportResult({ result }: BulkImportResultProps) {
     const [filter, setFilter] = useState<'all' | 'success' | 'failed'>('all');
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-    // Lọc danh sách dựa trên tab đang chọn
+    // Lọc danh sách
     const filteredDetails = result.details.filter(item => {
         if (filter === 'success') return item.status === 'success';
         if (filter === 'failed') return item.status === 'failed';
@@ -46,8 +46,6 @@ export default function BulkImportResult({ result }: BulkImportResultProps) {
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-6">
-
-            {/* Header & Stats Cards*/}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Total Card */}
                 <div className="bg-gray-800/50 border border-gray-700 p-4 rounded-2xl flex items-center justify-between">
@@ -95,9 +93,7 @@ export default function BulkImportResult({ result }: BulkImportResultProps) {
                 </div>
             </div>
 
-            {/* Action Bar (Filter)*/}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white/5 border border-white/10 p-2 rounded-xl">
-                {/* Filters */}
                 <div className="flex bg-black/20 p-1 rounded-lg w-full md:w-auto">
                     {(['all', 'success', 'failed'] as const).map((type) => (
                         <button
@@ -160,7 +156,7 @@ export default function BulkImportResult({ result }: BulkImportResultProps) {
                                                     href={item.shortUrl}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="text-emerald-400 font-mono text-sm hover:underline truncate"
+                                                    className="text-emerald-400 text-sm hover:underline truncate"
                                                 >
                                                     {item.shortUrl}
                                                 </a>

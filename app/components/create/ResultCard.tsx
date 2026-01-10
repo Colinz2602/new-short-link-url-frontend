@@ -47,7 +47,6 @@ export default function ResultCard({ error, successResult, geoRulesCount }: Resu
                         Your link is ready!
                     </h3>
 
-                    {/* Show Geo Rules count if available */}
                     {geoRulesCount > 0 && (
                         <div className="flex items-center gap-1 text-xs font-medium text-teal-400/80 bg-teal-500/10 px-3 py-1 rounded-full">
                             <Globe className="w-3 h-3" />
